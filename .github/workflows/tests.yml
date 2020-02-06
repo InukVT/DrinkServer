@@ -10,7 +10,7 @@ jobs:
       psql:
         image: postgres
         ports:
-          - 5432:5432
+          - '5432:5432'
         env:
           POSTGRES_USER: vapor_username
           POSTGRES_DB: vapor_database
