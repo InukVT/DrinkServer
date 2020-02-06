@@ -8,10 +8,10 @@ public func configure(_ app: Application) throws {
     // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
     app.databases.use(.postgres(
-        hostname: Environment.get("DATABASE_HOST") ?? "localhost",
-        username: Environment.get("DATABASE_USERNAME") ?? "vapor_username",
-        password: Environment.get("DATABASE_PASSWORD") ?? "vapor_password",
-        database: Environment.get("DATABASE_NAME") ?? "vapor_database"
+        hostname: Environment.get("POSTGRES_HOST") ?? "localhost",
+        username: Environment.get("POSTGRES_USER") ?? "vapor_username",
+        password: Environment.get("POSTGRES_PASSWORD") ?? "vapor_password",
+        database: Environment.get("POSTGRES_DB") ?? "vapor_database"
     ), as: .psql)
 
     app.migrations.add(CreateTodo())
