@@ -23,7 +23,7 @@ class VaporTester: XCTestCase {
                 .wait()
         }
         catch {
-            XCTFail(#"Setup failed."#)
+            XCTFail("Setup failed. with \(error)")
         }
     }
     
