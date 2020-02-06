@@ -1,4 +1,4 @@
-[![Swift](https://github.com/BastianInuk/DrinkServer/workflows/Swift/badge.svg)](https://github.com/BastianInuk/DrinkServer/actions?query=workflow%3ASwift)
+[![Tests](https://github.com/BastianInuk/DrinkServer/workflows/Tests/badge.svg)](https://github.com/BastianInuk/DrinkServer/actions?query=workflow%3ASwift)
 # DrinkServer
 Eksamens Project, Computer Science Q1 2020
 
