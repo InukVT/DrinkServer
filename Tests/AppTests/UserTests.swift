@@ -1,7 +1,7 @@
 @testable import App
 import XCTVapor
 
-final class UserTests: VaporTester {
+final class UserTests: VaporTestCase {
     func testUserRights() throws {
         let testUser = User(mail: "inuk@ruc.dk", password: "hello")
         testUser.save(on: app.db)

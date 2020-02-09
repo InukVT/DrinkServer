@@ -2,7 +2,7 @@ import XCTVapor
 import App
 
 /// Conform to this, when writing test classes
-class VaporTester: XCTestCase {
+class VaporTestCase: XCTestCase {
     
     // MARK: Properties
     
