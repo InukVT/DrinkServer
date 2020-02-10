@@ -3,7 +3,7 @@ import XCTVapor
 
 final class UserTests: VaporTestCase {
     func testUserRights() throws {
-        let testUser = User(mail: "inuk@ruc.dk", password: "hello")
+        let testUser = User(mail: "inuk@ruc.dk", passwordHash: "hello")
         testUser.save(on: app.db)
         
         let fetchedUser = User.find(1, on: app.db) // Fetch user to get the

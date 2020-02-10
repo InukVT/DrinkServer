@@ -18,7 +18,7 @@ final class User: Model {
     var mail: String
     
     @Field(key: "password")
-    var password: String
+    var passwordHash: String
     
     @Field(key: "rights")
     var rights: UserRights
@@ -26,8 +26,11 @@ final class User: Model {
     // this is to conform to model
     init() {}
     
-    init(id: Int? = nil, mail: String, password: String, rights: UserRights = .canOrder) {
+    init(id: Int? = nil, mail: String, passwordHash: String, rights: UserRights = .canOrder) {
         self.id = id
+        self.mail = mail
+        self.passwordHash = passwordHash
+        self.rights = rights
     }
 }
 
