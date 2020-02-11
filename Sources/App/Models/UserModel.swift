@@ -6,6 +6,7 @@
 //
 
 import Fluent
+import Vapor
 
 final class User: Model {
     
@@ -34,12 +35,42 @@ final class User: Model {
     }
 }
 
-extension User {
-    /// This is like a bitmask, but much nicer handled
-    struct UserRights: OptionSet, Codable {
-        let rawValue: UInt8
-        
-        /// The user can order
-        public static let canOrder = UserRights(rawValue: 1 << 0)
+extension User: ModelUser {
+    static let usernameKey = \User.$mail
+    static let passwordHashKey = \User.$passwordHash
+
+    func verify(password: String) throws -> Bool {
+        try Bcrypt.verify(password, created: self.passwordHash)
     }
 }
+    enum UserError: Error {
+        case billy
+    }
+    /// This is like a bitmask, but much nicer handled
+struct UserRights: Codable, OptionSet  {
+        init(rawValue: UInt64) {
+            self.rawValue = rawValue
+        }
+        
+        let rawValue: UInt64
+
+        func encode(to encoder: Encoder) throws {
+            try rawValue.encode(to: encoder)
+        }
+        
+        init(from decoder: Decoder) throws {
+          rawValue = try .init(from: decoder)
+        }
+        
+        /// This is a given user, used for default Init in User
+        static let everyone: UserRights = []
+    
+        static let canOrder = UserRights(rawValue: 1 << 0)
+        /// Anyone with this priv can change a different user
+        static let modUser = UserRights(rawValue: 1 << 1)
+        /// This user can edit and add books to the system
+        static let mangaUpload = UserRights(rawValue: 1 << 2)
+        
+        /// Has all the rights, you shouldn't check on this, only make a user super admin
+        static let superAdmin = UserRights(rawValue: 1 << 0)
+    }

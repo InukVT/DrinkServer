@@ -22,7 +22,7 @@ public func configure(_ app: Application) throws {
     ), as: .psql)
 
     app.migrations.add(CreateTodo())
-
+    app.migrations.add(User.Migtation())
     // register routes
     try routes(app)
 }

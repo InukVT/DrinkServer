@@ -3,14 +3,19 @@ import XCTVapor
 
 final class UserTests: VaporTestCase {
     func testUserRights() throws {
-        let testUser = User(mail: "inuk@ruc.dk", passwordHash: "hello")
-        testUser.save(on: app.db)
+        let plainPassword = "password"
+        let passwordHash = try Bcrypt.hash(plainPassword)
+        let testUser = User(mail: "inuk@ruc.dk", passwordHash: passwordHash)
+        try testUser.save(on: app.db).wait()
         
         let fetchedUser = User.find(1, on: app.db) // Fetch user to get the
-        fetchedUser.map { user -> Void in // Explicit void, because void can't be inferred
-            XCTAssertTrue( user?.rights.contains(.canOrder) ?? false ) // If there's no user, then they can't order
-            
-            user?.delete(force: true, on: self.app.db) // Cleanly remove the user after use
+        guard let user = try fetchedUser.wait() else {
+            XCTFail("Couldn't find user") // This should never happen
+            return
         }
+        XCTAssertTrue( user.rights.contains(.canOrder) ) // If there's no user, then they can't order
+        let passwordVerified = try user.verify(password: plainPassword)
+        XCTAssertTrue(passwordVerified)
+        
     }
 }
