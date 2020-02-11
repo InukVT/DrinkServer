@@ -63,7 +63,4 @@ struct UserRights: Codable, OptionSet  {
     static let modUser = UserRights(rawValue: 1 << 1)
     /// This user can edit and add medicine to the system
     static let modMedicin = UserRights(rawValue: 1 << 2)
-    
-    /// Has all the rights, you shouldn't check on this, only make a user super admin
-    static let superAdmin = UserRights(rawValue: 1 << 0)
 }
