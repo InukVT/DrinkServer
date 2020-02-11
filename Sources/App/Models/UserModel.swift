@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Bastian Inuk Christensen on 06/02/2020.
-//
-
 import Fluent
 import Vapor
 
