@@ -21,15 +21,20 @@ class VaporTestCase: XCTestCase {
             try app
                 .autoMigrate()
                 .wait()
-        }
-        catch {
+        } catch {
             XCTFail("Setup failed. with \(error)")
         }
     }
     
     override func tearDown() {
         super.tearDown()
-        
+        do {
+            try app
+                .autoRevert()
+                .wait()
+        } catch {
+            XCTFail("Couldn't tear down derver with error: \(error)")
+        }
         app.shutdown()
     }
 

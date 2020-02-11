@@ -10,7 +10,7 @@ final class UserTests: VaporTestCase {
         
         let fetchedUser = User.find(1, on: app.db) // Fetch user to get the
         guard let user = try fetchedUser.wait() else {
-            XCTFail("Couldn't find user") // This should never happen
+            XCTFail("Couldn't find user") // This should never happen, as we _just_ created the user
             return
         }
         XCTAssertTrue( user.rights.contains(.canOrder) ) // If there's no user, then they can't order
