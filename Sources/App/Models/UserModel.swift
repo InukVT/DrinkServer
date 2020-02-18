@@ -36,10 +36,12 @@ extension User: ModelUser {
         try Bcrypt.verify(password, created: self.passwordHash)
     }
 }
-    enum UserError: Error {
-        case billy
-    }
-    /// This is like a bitmask, but much nicer handled
+
+enum UserError: Error {
+    case billy
+}
+
+/// This is like a bitmask, but much nicer handled
 struct UserRights: Codable, OptionSet  {
     init(rawValue: UInt64) {
         self.rawValue = rawValue
