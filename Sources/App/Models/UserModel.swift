@@ -1,7 +1,7 @@
 import Fluent
 import Vapor
 
-final class User: Model {
+final class User: Model, Content {
     
     static var schema = "user"
     
@@ -25,6 +25,18 @@ final class User: Model {
         self.mail = mail
         self.passwordHash = passwordHash
         self.rights = rights
+    }
+    
+    /// Convenience init, with build in password hasher
+    convenience init (user: Create) throws {
+        self.init(mail: user.mail, passwordHash: try Bcrypt.hash(user.password))
+    }
+}
+
+extension User {
+    struct Create: Content {
+        let mail: String
+        let password: String
     }
 }
 

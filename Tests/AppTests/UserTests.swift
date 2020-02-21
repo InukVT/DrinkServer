@@ -18,4 +18,37 @@ final class UserTests: VaporTestCase {
         XCTAssertTrue(passwordVerified)
         
     }
+    
+    func testRegisterUser() throws {
+        let headers: HTTPHeaders = ["Content-Type":"application/json"]
+        let user = User.Create(mail: "my@mail.com", password: "123123")
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(user)
+        let string = String(data: data, encoding: .utf8)!
+        var body = ByteBufferAllocator().buffer(capacity: data.count)
+            body.writeBytes(data)
+        
+        try app.test(.POST, "user/register", headers: headers, body: body) { res in
+            XCTAssertEqual(res.status, .ok)
+        }
+    }
+    
+    func testLoginUser() throws {
+        let headers: HTTPHeaders = ["Content-Type":"application/json"]
+        let user = User.Create(mail: "my@mail.com", password: "123123")
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(user)
+        var body = ByteBufferAllocator().buffer(capacity: data.count)
+            body.writeBytes(data)
+        
+        try app.test(.POST, "user/login",headers: headers, body: body) { res in
+            XCTAssertEqual(res.status, .ok)
+        }
+    }
+    
+    func testLogoutUser() throws {
+        try app.test(.POST, "user/logout") { res in
+            
+        }
+    }
 }

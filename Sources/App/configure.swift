@@ -23,5 +23,6 @@ public func configure(_ app: Application) throws {
 
     app.migrations.add(User.Migtation())
     // register routes
+    try app.routes.register(collection: UserController())
     try routes(app)
 }
