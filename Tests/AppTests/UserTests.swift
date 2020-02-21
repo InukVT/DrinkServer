@@ -24,7 +24,6 @@ final class UserTests: VaporTestCase {
         let user = User.Create(mail: "my@mail.com", password: "123123")
         let encoder = JSONEncoder()
         let data = try encoder.encode(user)
-        let string = String(data: data, encoding: .utf8)!
         var body = ByteBufferAllocator().buffer(capacity: data.count)
             body.writeBytes(data)
         
