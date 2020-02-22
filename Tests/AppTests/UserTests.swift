@@ -2,10 +2,11 @@
 import XCTVapor
 
 final class UserTests: VaporTestCase {
+    
     func testUserRights() throws {
         let plainPassword = "password"
         let passwordHash = try Bcrypt.hash(plainPassword)
-        let testUser = User(mail: "inuk@ruc.dk", passwordHash: passwordHash)
+        let testUser = User(mail: "inuk@ruc.dk", password: passwordHash)
         try testUser.save(on: app.db).wait()
         
         let fetchedUser = User.find(1, on: app.db) // Fetch user to get the
@@ -21,7 +22,7 @@ final class UserTests: VaporTestCase {
     
     func testRegisterUser() throws {
         let headers: HTTPHeaders = ["Content-Type":"application/json"]
-        let user = User.Create(mail: "my@mail.com", password: "123123")
+        let user = User(mail: "my@mail.com", password: "123123")
         let encoder = JSONEncoder()
         let data = try encoder.encode(user)
         var body = ByteBufferAllocator().buffer(capacity: data.count)
@@ -33,14 +34,11 @@ final class UserTests: VaporTestCase {
     }
     
     func testLoginUser() throws {
-        let headers: HTTPHeaders = ["Content-Type":"application/json"]
-        let user = User.Create(mail: "my@mail.com", password: "123123")
-        let encoder = JSONEncoder()
-        let data = try encoder.encode(user)
-        var body = ByteBufferAllocator().buffer(capacity: data.count)
-            body.writeBytes(data)
+        try testRegisterUser()
+        let userString =  "my@mail.com:123123".data(using: .utf8)?.base64EncodedString()
+        let headers: HTTPHeaders = ["Authorization":"Basic \(userString!)"]
         
-        try app.test(.POST, "user/login",headers: headers, body: body) { res in
+        try app.test(.POST, "user/login", headers: headers) { res in
             XCTAssertEqual(res.status, .ok)
         }
     }

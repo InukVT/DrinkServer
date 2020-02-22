@@ -11,13 +11,26 @@ struct UserController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let userCollection = routes.grouped("user")
         userCollection.post("register", use: registerUser)
+        
+        let passwordProtected = userCollection.grouped(User.authenticator().middleware())
+        passwordProtected.post("login", use: loginUser)
     }
     
-    func registerUser(req: Request) throws -> EventLoopFuture<User> {
-        try User(user: try req.content.decode(User.Create.self))
+    func registerUser(req: Request) throws -> HTTPResponseStatus {
+        let userContent = try req.content.decode(User.UserContent.self)
+            
+        let _ = userContent//User(user: user)
+            .hash()
+            .toUser()
             .save(on: req.db)
-            .map{_ in
-                try! User(user: try req.content.decode(User.Create.self))
-        }
+        return .ok
+    }
+    
+    func loginUser(req: Request) throws -> User.Token {
+        let user = try req.auth.require(User.self)
+        let token = try user.generateToken()
+        let _ = token
+            .save(on: req.db)
+        return token
     }
 }

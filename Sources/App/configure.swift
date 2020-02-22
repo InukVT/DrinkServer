@@ -22,6 +22,7 @@ public func configure(_ app: Application) throws {
     ), as: .psql)
 
     app.migrations.add(User.Migtation())
+    app.migrations.add(User.Token.Migration())
     // register routes
     try app.routes.register(collection: UserController())
     try routes(app)

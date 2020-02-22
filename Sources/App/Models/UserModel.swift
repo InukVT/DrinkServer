@@ -12,7 +12,7 @@ final class User: Model, Content {
     var mail: String
     
     @Field(key: "password")
-    var passwordHash: String
+    var password: String
     
     @Field(key: "rights")
     var rights: UserRights
@@ -20,32 +20,69 @@ final class User: Model, Content {
     // this is to conform to model
     init() {}
     
-    init(id: Int? = nil, mail: String, passwordHash: String, rights: UserRights = .canOrder) {
+    init(id: Int? = nil, mail: String, password: String, rights: UserRights = .canOrder) {
         self.id = id
         self.mail = mail
-        self.passwordHash = passwordHash
+        self.password = password
         self.rights = rights
-    }
-    
-    /// Convenience init, with build in password hasher
-    convenience init (user: Create) throws {
-        self.init(mail: user.mail, passwordHash: try Bcrypt.hash(user.password))
     }
 }
 
 extension User {
-    struct Create: Content {
+    final class UserContent: Content {
         let mail: String
         let password: String
+        
+        func toUser() -> User {
+            .init(mail: mail, password: password)
+        }
+        
+        init(mail: String, password: String) {
+            self.mail = mail
+            self.password = password
+        }
+        
+        func hash() -> UserContent {
+            .init(mail: mail, password: try! Bcrypt.hash(password))
+        }
+    }
+}
+
+extension User {
+    final class Token: Model, Content {
+        static var schema = "user_tokens"
+        
+        @ID(key: "id")
+        var id: Int?
+        
+        @Field(key: "token")
+        var token: String
+        
+        @Parent(key: "user")
+        var user: User
+        
+        init() {}
+        
+        init(id: Int? = nil, token: String, userID: User.IDValue) {
+            self.id = id
+            self.token = token
+            self.$user.id = userID
+        }
+    }
+    
+    func generateToken() throws -> Token {
+        try .init(
+            token: [UInt8].random(count: 16).base64,
+            userID: self.requireID())
     }
 }
 
 extension User: ModelUser {
     static let usernameKey = \User.$mail
-    static let passwordHashKey = \User.$passwordHash
+    static let passwordHashKey = \User.$password
 
     func verify(password: String) throws -> Bool {
-        try Bcrypt.verify(password, created: self.passwordHash)
+        try Bcrypt.verify(password, created: self.password)
     }
 }
 

@@ -17,3 +17,21 @@ extension User {
         }
     }
 }
+
+extension User.Token {
+    struct Migration: Fluent.Migration {
+        let name = User.Token.schema
+        
+        func prepare(on database: Database) -> EventLoopFuture<Void> {
+            database.schema(name)
+                .field("id", .int, .identifier(auto: true))
+                .field("token", .string, .required)
+                .field("user", .int, .required)
+                .create()
+        }
+        
+        func revert(on database: Database) -> EventLoopFuture<Void> {
+            database.schema(name).delete()
+        }
+    }
+}
