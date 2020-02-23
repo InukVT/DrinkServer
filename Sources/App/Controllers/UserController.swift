@@ -26,11 +26,12 @@ struct UserController: RouteCollection {
         return .ok
     }
     
-    func loginUser(req: Request) throws -> User.Token {
+    func loginUser(req: Request) throws -> EventLoopFuture<User.Token> {
         let user = try req.auth.require(User.self)
         let token = try user.generateToken()
-        let _ = token
+        req.auth.login(user.self)
+        return  token
             .save(on: req.db)
-        return token
+            .map{ token }
     }
 }

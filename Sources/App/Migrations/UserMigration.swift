@@ -26,7 +26,7 @@ extension User.Token {
             database.schema(name)
                 .field("id", .int, .identifier(auto: true))
                 .field("token", .string, .required)
-                .field("user", .int, .required)
+                .field("user_id", .int, .required)
                 .create()
         }
         

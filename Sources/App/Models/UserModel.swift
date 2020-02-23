@@ -50,7 +50,7 @@ extension User {
 
 extension User {
     final class Token: Model, Content {
-        static var schema = "user_tokens"
+        static var schema = "user_token"
         
         @ID(key: "id")
         var id: Int?
@@ -58,7 +58,7 @@ extension User {
         @Field(key: "token")
         var token: String
         
-        @Parent(key: "user")
+        @Parent(key: "user_id")
         var user: User
         
         init() {}
