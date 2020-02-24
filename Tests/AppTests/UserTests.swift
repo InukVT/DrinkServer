@@ -61,12 +61,5 @@ final class UserTests: VaporTestCase {
         try app.test(.DELETE, "user/logout", headers: logoutHeader) { res in
             XCTAssertEqual(res.status, .ok)
         }
-        
-        let token = try? Token.query(on: app.db)
-            .filter("token", .equal, isEqual(to: userToken.token))
-            .first()
-            .wait()
-        
-        XCTAssertNil(token)
     }
 }
