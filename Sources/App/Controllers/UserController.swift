@@ -19,14 +19,14 @@ struct UserController: RouteCollection {
         tokenProtected.delete("logout", use: logoutUser)
     }
     
-    func registerUser(req: Request) throws -> HTTPResponseStatus {
+    func registerUser(req: Request) throws -> EventLoopFuture<HTTPResponseStatus> {
         let userContent = try req.content.decode(User.UserContent.self)
             
-        let _ = userContent//User(user: user)
+        return userContent
             .hash()
             .toUser()
             .save(on: req.db)
-        return .ok
+            .map{ HTTPResponseStatus.ok }
     }
     
     func loginUser(req: Request) throws -> EventLoopFuture<Token> {
