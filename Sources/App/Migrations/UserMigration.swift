@@ -18,15 +18,16 @@ extension User {
     }
 }
 
-extension User.Token {
+extension Token {
     struct Migration: Fluent.Migration {
-        let name = User.Token.schema
+        let name = Token.schema
         
         func prepare(on database: Database) -> EventLoopFuture<Void> {
             database.schema(name)
                 .field("id", .int, .identifier(auto: true))
                 .field("token", .string, .required)
                 .field("user_id", .int, .required)
+                .unique(on: "token")
                 .create()
         }
         

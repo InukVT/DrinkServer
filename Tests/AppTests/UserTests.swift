@@ -16,6 +16,7 @@ final class UserTests: VaporTestCase {
         }
         XCTAssertTrue( user.rights.contains(.canOrder) ) // If there's no user, then they can't order
         let passwordVerified = try user.verify(password: plainPassword)
+        print(passwordVerified)
         XCTAssertTrue(passwordVerified)
         
     }
@@ -44,8 +45,21 @@ final class UserTests: VaporTestCase {
     }
     
     func testLogoutUser() throws {
-        try app.test(.POST, "user/logout") { res in
-            
+        try testRegisterUser()
+        let userString =  "my@mail.com:123123".data(using: .utf8)?.base64EncodedString()
+        let loginHeader: HTTPHeaders = ["Authorization":"Basic \(userString!)"]
+        
+        var userToken: Token = .init()
+        
+        try app.test(.POST, "user/login", headers: loginHeader) { res in
+            XCTAssertEqual(res.status, .ok)
+            userToken = try res.content.decode(Token.self)
+        }
+        
+        let logoutHeader: HTTPHeaders = ["Authorization":"Bearer \(userToken.token)"]
+        
+        try app.test(.DELETE, "user/logout", headers: logoutHeader) { res in
+            XCTAssertEqual(res.status, .ok)
         }
     }
 }

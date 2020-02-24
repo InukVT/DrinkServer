@@ -48,32 +48,41 @@ extension User {
     }
 }
 
-extension User {
-    final class Token: Model, Content {
-        static var schema = "user_token"
-        
-        @ID(key: "id")
-        var id: Int?
-        
-        @Field(key: "token")
-        var token: String
-        
-        @Parent(key: "user_id")
-        var user: User
-        
-        init() {}
-        
-        init(id: Int? = nil, token: String, userID: User.IDValue) {
-            self.id = id
-            self.token = token
-            self.$user.id = userID
-        }
-    }
+final class Token: Model, Content {
+    static var schema = "user_token"
     
+    @ID(key: "id")
+    var id: Int?
+    
+    @Field(key: "token")
+    var token: String
+    
+    @Parent(key: "user_id")
+    var user: User
+    
+    init() {}
+    
+    init(id: Int? = nil, token: String, userID: User.IDValue) {
+        self.id = id
+        self.token = token
+        self.$user.id = userID
+    }
+}
+extension User {
     func generateToken() throws -> Token {
         try .init(
             token: [UInt8].random(count: 16).base64,
             userID: self.requireID())
+    }
+}
+
+extension Token: ModelUserToken {
+    
+    static let valueKey = \Token.$token
+    static let userKey = \Token.$user
+
+    var isValid: Bool {
+        true
     }
 }
 

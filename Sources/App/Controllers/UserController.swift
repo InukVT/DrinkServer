@@ -14,6 +14,9 @@ struct UserController: RouteCollection {
         
         let passwordProtected = userCollection.grouped(User.authenticator().middleware())
         passwordProtected.post("login", use: loginUser)
+        
+        let tokenProtected = userCollection.grouped(Token.authenticator().middleware())
+        tokenProtected.delete("logout", use: logoutUser)
     }
     
     func registerUser(req: Request) throws -> HTTPResponseStatus {
@@ -26,12 +29,17 @@ struct UserController: RouteCollection {
         return .ok
     }
     
-    func loginUser(req: Request) throws -> EventLoopFuture<User.Token> {
+    func loginUser(req: Request) throws -> EventLoopFuture<Token> {
         let user = try req.auth.require(User.self)
         let token = try user.generateToken()
         req.auth.login(user.self)
         return  token
             .save(on: req.db)
             .map{ token }
+    }
+    
+    func logoutUser(req: Request) throws -> HTTPResponseStatus {
+        req.auth.logout(User.self)
+        return .ok
     }
 }
