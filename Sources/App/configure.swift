@@ -21,8 +21,9 @@ public func configure(_ app: Application) throws {
         database: Environment.get("POSTGRES_DB") ?? "vapor_database"
     ), as: .psql)
 
-    app.migrations.add(CreateTodo())
-
+    app.migrations.add(User.Migtation())
+    app.migrations.add(Token.Migration())
     // register routes
+    try app.routes.register(collection: UserController())
     try routes(app)
 }
