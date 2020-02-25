@@ -1,0 +1,80 @@
+* {box-sizing: border-box}
+
+body, html {
+    background-color: red;
+    height: 100%;
+    font-family: Arial, Helvetica, sans-serif; /*Most common fonts for both mac and windows*/
+    }
+
+/* Add padding to containers */
+.container {
+    margin: 20px;
+    padding: 16px;
+    background-color: rgb(200, 85, 85);
+}
+
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: white;
+}
+
+input[type=text]:focus, input[type=password]:focus {
+  background-color: white;
+  outline: none;
+}
+
+/* Set a style for the register button */
+.registerbtn {
+    background-color: white;
+    color: black;
+    padding: 16px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    opacity: 0.9;
+    margin: 5px 0 22px 0;
+}
+
+.registerbtn:hover {
+  opacity:1;
+}
+
+/* Add a blue text color to links */
+a:link, a:visited {
+    text-align: center;
+    text-decoration: none;
+  }
+
+/* Set a grey background color and center the text of the "sign in" section */
+.signin {
+  background-color: rgb(200, 85, 85);
+  text-align: center;
+}
+/* Create a link, that has the appearance of a button*/
+a.btn2 {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+    background-color: white;
+    color: black;
+    padding: 16px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    opacity: 0.9;
+    margin: 5px 0 22px 0;
+  }
+
+  /* Change appearance if mouse is hovering */
+  .btn2:hover {
+    opacity: 1;
+
+    text-decoration: none;
+    color: initial;
+}

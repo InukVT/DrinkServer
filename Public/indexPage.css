@@ -1,0 +1,94 @@
+body, html {
+    height: 100%;
+    font-family: Arial, Helvetica, sans-serif; /*Most common fonts for both mac and windows*/
+    overflow: hidden; /* Hide scrollbars */
+    }
+        
+        * {
+          box-sizing: border-box;
+        }
+        /* Center the logo*/
+        .centerlogo {
+        margin: 2px;
+        width: 100%;
+            
+          }
+        
+        .background {
+          background-color: red;
+          min-height: 380px;
+          /* Center and scale the image nicely */
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+          position: relative;
+        }
+        
+        /* Add styles to the form container */
+        .container {
+          position: absolute;
+          right: 0;
+          margin: 20px;
+          max-width: 50%;
+          padding: 16px;
+          background-color: rgb(200, 85, 85);
+        }
+        
+        /* Full-width input fields */
+        input[type=text], input[type=password] {
+          width: 100%;
+          padding: 15px;
+          margin: 5px 0 22px 0;
+          border: none;
+          background: white;
+        }
+        
+        input[type=text]:focus, input[type=password]:focus {
+          background-color: white;
+          outline: none;
+        }
+        
+        /* Set a style for the submit button */
+        .btn1 {
+          background-color: white;
+          color: black;
+          padding: 16px 20px;
+          border: none;
+          cursor: pointer;
+          width: 100%;
+          opacity: 0.9;
+          margin: 5px 0 22px 0;
+        }
+        
+        /* Change appearance if mouse is hovering */
+        .btn1:hover {
+          opacity: 1;
+        }
+        
+        /* Create a link, that has the appearance of a button*/
+        a.btn2 {
+            -webkit-appearance: button;
+            -moz-appearance: button;
+            appearance: button;
+            background-color: white;
+            color: black;
+            padding: 16px 20px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            opacity: 0.9;
+            margin: 5px 0 22px 0;
+          }
+
+          /* Change appearance if mouse is hovering */
+          .btn2:hover {
+            opacity: 1;
+        
+            text-decoration: none;
+            color: initial;
+        }
+        /* Change the text to match the real button  */
+        a:link, a:visited {
+            text-align: center;
+            text-decoration: none;
+          }
