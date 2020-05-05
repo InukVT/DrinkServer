@@ -1,12 +1,12 @@
 import Fluent
-import FluentPostgresDriver
+import FluentSQLiteDriver
 import Vapor
 
 // configures your application
 public func configure(_ app: Application) throws {
     // uncomment to serve files from /Public folder
     // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
-
+/*
     let hostname: String
     #if os(Linux)
     hostname = "psql"
@@ -20,7 +20,9 @@ public func configure(_ app: Application) throws {
         password: Environment.get("POSTGRES_PASSWORD") ?? "vapor_password",
         database: Environment.get("POSTGRES_DB") ?? "vapor_database"
     ), as: .psql)
-
+*/
+    app.databases.use(.sqlite(.memory), as: .sqlite)
+    
     app.migrations.add(User.Migtation())
     app.migrations.add(Token.Migration())
     // register routes
