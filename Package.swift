@@ -15,7 +15,7 @@ let package = Package(
     targets: [
         .target(name: "App", dependencies: [
             "Fluent", 
-            "FluentPostgresDriver",
+            "FluentSQLiteDriver",
             "Vapor"
         ]),
         .target(name: "Run", dependencies: ["App"]),
