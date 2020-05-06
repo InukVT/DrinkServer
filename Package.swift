@@ -1,24 +1,26 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.2
 import PackageDescription
 
 let package = Package(
     name: "DrinkServer",
     platforms: [
-       .macOS(.v10_14)
+       .macOS(.v10_15)
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0-beta"),
-        .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0-beta"),
-        .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.0-beta")
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
+        .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0-rc"),
+        .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.0-rc")
     ],
     targets: [
         .target(name: "App", dependencies: [
-            "Fluent", 
-            "FluentSQLiteDriver",
-            "Vapor"
+            .product(name: "Fluent", package: "fluent"),
+            .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
+            .product(name: "Vapor", package: "vapor")
         ]),
         .target(name: "Run", dependencies: ["App"]),
-        .testTarget(name: "AppTests", dependencies: ["App", "XCTVapor"])
+        .testTarget(name: "AppTests", dependencies: [
+            "App",
+            .product(name: "XCTVapor", package: "vapor")])
     ]
 )

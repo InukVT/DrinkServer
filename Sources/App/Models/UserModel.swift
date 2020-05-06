@@ -1,12 +1,25 @@
 import Fluent
 import Vapor
 
+
+final class UserAuthenticator: BasicAuthenticator {
+    
+    func authenticate(basic: BasicAuthorization,
+                      for req: Request
+    ) -> EventLoopFuture<Void> {
+        let user = User(mail: basic.username,
+                        password: basic.password)
+        
+        return req.eventLoop.submit{ req.auth.login(user) }
+    }
+}
+
 final class User: Model, Content {
     
     static var schema = "user"
     
     @ID(key: "id")
-    var id: Int?
+    var id: UUID?
     
     @Field(key: "mail")
     var mail: String
@@ -20,7 +33,7 @@ final class User: Model, Content {
     // this is to conform to model
     init() {}
     
-    init(id: Int? = nil, mail: String, password: String, rights: UserRights = .canOrder) {
+    init(id: UUID? = nil, mail: String, password: String, rights: UserRights = .canOrder) {
         self.id = id
         self.mail = mail
         self.password = password
@@ -52,7 +65,7 @@ final class Token: Model, Content {
     static var schema = "user_token"
     
     @ID(key: "id")
-    var id: Int?
+    var id: UUID?
     
     @Field(key: "token")
     var token: String
@@ -62,7 +75,7 @@ final class Token: Model, Content {
     
     init() {}
     
-    init(id: Int? = nil, token: String, userID: User.IDValue) {
+    init(id: UUID? = nil, token: String, userID: User.IDValue) {
         self.id = id
         self.token = token
         self.$user.id = userID
@@ -76,7 +89,7 @@ extension User {
     }
 }
 
-extension Token: ModelUserToken {
+extension Token: ModelTokenAuthenticatable {
     
     static let valueKey = \Token.$token
     static let userKey = \Token.$user
@@ -86,7 +99,7 @@ extension Token: ModelUserToken {
     }
 }
 
-extension User: ModelUser {
+extension User: ModelAuthenticatable {
     static let usernameKey = \User.$mail
     static let passwordHashKey = \User.$password
 

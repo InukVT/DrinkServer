@@ -12,10 +12,10 @@ struct UserController: RouteCollection {
         let userCollection = routes.grouped("user")
         userCollection.post("register", use: registerUser)
         
-        let passwordProtected = userCollection.grouped(User.authenticator().middleware())
+        let passwordProtected = userCollection.grouped(UserAuthenticator())
         passwordProtected.post("login", use: loginUser)
         
-        let tokenProtected = userCollection.grouped(Token.authenticator().middleware())
+        let tokenProtected = userCollection.grouped(User.guardMiddleware())
         tokenProtected.delete("logout", use: logoutUser)
     }
     

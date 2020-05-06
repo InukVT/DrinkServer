@@ -9,7 +9,9 @@ final class UserTests: VaporTestCase {
         let testUser = User(mail: "inuk@ruc.dk", password: passwordHash)
         try testUser.save(on: app.db).wait()
         
-        let fetchedUser = User.find(1, on: app.db) // Fetch user to get the
+        let fetchedUser = User.query(on: app.db)
+            .filter(\User.$mail, .equal, "inuk@ruc.dk")
+            .first()// Fetch user to get the
         guard let user = try fetchedUser.wait() else {
             XCTFail("Couldn't find user") // This should never happen, as we _just_ created the user
             return
