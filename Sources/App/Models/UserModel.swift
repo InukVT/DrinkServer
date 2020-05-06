@@ -7,10 +7,17 @@ final class UserAuthenticator: BasicAuthenticator {
     func authenticate(basic: BasicAuthorization,
                       for req: Request
     ) -> EventLoopFuture<Void> {
-        let user = User(mail: basic.username,
-                        password: basic.password)
-        
-        return req.eventLoop.submit{ req.auth.login(user) }
+        User.query(on: req.db)
+            .filter(\.$mail == basic.username)
+            .first()
+            .unwrap(or: Abort(.unauthorized))
+            .flatMapThrowing { user in
+                if try user.verify(password: basic.password) {
+                    req.auth.login(user)
+                } else {
+                    Abort(.unauthorized)
+                }
+        }
     }
 }
 

@@ -32,7 +32,7 @@ struct UserController: RouteCollection {
     func loginUser(req: Request) throws -> EventLoopFuture<Token> {
         let user = try req.auth.require(User.self)
         let token = try user.generateToken()
-        req.auth.login(user.self)
+        //req.auth.login(user.self)
         return  token
             .save(on: req.db)
             .map{ token }
