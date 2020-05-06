@@ -2,7 +2,7 @@ import Fluent
 import Vapor
 
 
-final class UserAuthenticator: BasicAuthenticator {
+struct UserAuthenticator: BasicAuthenticator {
     
     func authenticate(basic: BasicAuthorization,
                       for req: Request
@@ -64,6 +64,25 @@ extension User {
         
         func hash() -> UserContent {
             .init(mail: mail, password: try! Bcrypt.hash(password))
+        }
+    }
+}
+
+struct TokenAuthenticator: BearerAuthenticator {
+    
+    func authenticate(bearer: BearerAuthorization,
+                      for req: Request) -> EventLoopFuture<Void> {
+        Token.query(on: req.db)
+            .filter(\.$token == bearer.token)
+            .first()
+            .unwrap(or: Abort(.unauthorized))
+            .flatMap { token in
+                token
+                    .$user
+                    .get(on: req.db)
+                    .map { user in
+                        req.auth.login( user )
+                }
         }
     }
 }
