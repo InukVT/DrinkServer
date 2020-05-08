@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Bastian Inuk Christensen on 21/02/2020.
-//
-
 import Vapor
 
 struct UserController: RouteCollection {

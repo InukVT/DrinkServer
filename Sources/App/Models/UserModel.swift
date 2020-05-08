@@ -15,7 +15,7 @@ struct UserAuthenticator: BasicAuthenticator {
                 if try user.verify(password: basic.password) {
                     req.auth.login(user)
                 } else {
-                    Abort(.unauthorized)
+                    throw Abort(.unauthorized)
                 }
         }
     }
@@ -161,5 +161,29 @@ struct UserRights: Codable, OptionSet  {
     /// Anyone with this priv can change a different user
     static let modUser = UserRights(rawValue: 1 << 1)
     /// This user can edit and add medicine to the system
-    static let modMedicin = UserRights(rawValue: 1 << 2)
+    static let modDrinks = UserRights(rawValue: 1 << 2)
+}
+
+struct AdminAuthenticator: BearerAuthenticator {
+    
+    func authenticate(bearer: BearerAuthorization,
+                      for req: Request) -> EventLoopFuture<Void> {
+        Token.query(on: req.db)
+            .filter(\.$token == bearer.token)
+            .first()
+            .unwrap(or: Abort(.unauthorized))
+            .flatMap { token in
+                token
+                    .$user
+                    .get(on: req.db)
+                    .map { user in
+                        if (user.rights.contains(.modDrinks))
+                        {
+                            req.auth.login( user )
+                        } else {
+                            Abort(.unauthorized)
+                        }
+                }
+        }
+    }
 }

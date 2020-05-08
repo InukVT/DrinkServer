@@ -6,7 +6,7 @@ public typealias ShotAmount = Int
 /**
     - Summary: The bare minimum for a Drink Machine
  */
-public protocol DrinkMachine {
+public protocol DrinkMachine: EventLoop {
     func pour(drink: DrinkID, amount: ShotAmount)
 }
 /*
