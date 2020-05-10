@@ -4,10 +4,18 @@ import Fluent
 struct DrinksController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let drinksGroup = routes.grouped("drinks")
-        let tokenAuth = drinksGroup.grouped(TokenAuthenticator())
-        let adminAuth = drinksGroup.grouped(AdminAuthenticator())
         
-        drinksGroup.post(use: drinks)
+        drinksGroup.get(use: drinks)
+        
+        // The following routes requires a logged in user
+        let tokenAuth = drinksGroup.grouped(TokenAuthenticator())
+        tokenAuth.post("order", use: orderDrink)
+        
+        // The following routes requires a user with the role "Can create drink"
+        let adminAuth = drinksGroup.grouped(AdminAuthenticator())
+        adminAuth.post(use: newDrink) // New drink on /drinks
+        adminAuth.post("ingredient", use: newIngredient) // New ingredient on /drinks/ingredient
+        
     }
     
     func drinks(req: Request) throws -> EventLoopFuture<[DrinkRecipe]> {
@@ -47,4 +55,34 @@ struct DrinksController: RouteCollection {
         }
                 
     }
+    
+    func orderDrink(req: Request) throws -> EventLoopFuture<HTTPStatus> {
+        let requestedDrink = try req.content.decode(Drink.self) // Get drink ID from request
+        return DrinkRecipe.query(on: req.db)                    // Start a Drinks recipe query
+            .filter(\.$id == requestedDrink.id)                 // Query the ID from request
+            .first()                                            // Get the first drink
+            .unwrap(or: Abort(.notFound))                       // Return not found, if there isn't any drinks
+            .map { drink in
+                .ok
+        }
+    }
+    
+    func newDrink(req: Request) throws -> EventLoopFuture<HTTPStatus> {
+        try req.content               // Get the content of HTTP request
+            .decode(DrinkRecipe.self) // Decode it as DrinkRecipe
+            .save(on: req.db)         // Save the request to DB
+            .map { .created }         // return a http created to the client
+    }
+    
+    func newIngredient(req: Request) throws -> EventLoopFuture<HTTPStatus> {
+        try req.content              // Get the content of HTTP request
+            .decode(Ingredient.self) // Decode it as DrinkRecipe
+            .save(on: req.db)        // Save the request to DB
+            .map { .created }        // return a http created to the client
+    }
+    
+    private struct Drink: Content {
+        let id: UUID
+    }
 }
+
