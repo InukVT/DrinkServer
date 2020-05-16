@@ -37,6 +37,24 @@ public struct MachineController: RouteCollection {
         body.evalBody(type: User.UserContent.self) { user in
             print(user.mail)
         }
+        
+        body.evalBody(type: RanOut.self) { liquor in
+            let machineID = liquor.machineID
+            let liquorID =  liquor.liqourID
+            
+            MachineDrinkPivot.query(on: machines[machineID]!.req.db)
+                .filter(\.$ingredient.$id == liquorID)
+                .filter(\.$machine.$id == machineID)
+                .delete()
+            
+            ws.send("Ingredient removed")
+        }
+        
+    }
+    
+    struct RanOut: Decodable {
+        let liqourID: UUID
+        let machineID: UUID
     }
 }
 
