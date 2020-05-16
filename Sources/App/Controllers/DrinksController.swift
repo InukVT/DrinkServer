@@ -57,13 +57,29 @@ struct DrinksController: RouteCollection {
     }
     
     func orderDrink(req: Request) throws -> EventLoopFuture<HTTPStatus> {
-        let requestedDrink = try req.content.decode(Drink.self) // Get drink ID from request
-        return DrinkRecipe.query(on: req.db)                    // Start a Drinks recipe query
-            .filter(\.$id == requestedDrink.id)                 // Query the ID from request
-            .first()                                            // Get the first drink
-            .unwrap(or: Abort(.notFound))                       // Return not found, if there isn't any drinks
-            .map { drink in
-                .ok
+        let requestedDrink = try req.content.decode(DrinkOrderer.self) // Get drink ID from request
+        return DrinkRecipe.query(on: req.db)                           // Start a Drinks recipe query
+            .filter(\.$id == requestedDrink.drinkID)                   // Query the ID from request
+            .with(\.$ingredient)                                       // Also get the ingridients
+            .first()                                                   // Get the first drink
+            .unwrap(or: Abort(.notFound))                              // Return not found, if there isn't any drinks
+            .flatMapThrowing { drink in
+                // Check to see if the requested machine exists
+                guard let machine = machines[requestedDrink.machineID]
+                    else {
+                        throw Abort(.notFound)
+                    }
+                
+                let jsonEncoder = JSONEncoder()
+                let drinkJson = try jsonEncoder.encode(drink)
+                let drinkString = String(data: drinkJson, encoding: .utf8)
+                if let drinkString = drinkString {
+                    machine.webSocket
+                        .send(drinkString)
+                } else {
+                    throw Abort(.internalServerError)
+                }
+                return .ok
         }
     }
     
@@ -81,8 +97,9 @@ struct DrinksController: RouteCollection {
             .map { .created }        // return a http created to the client
     }
     
-    private struct Drink: Content {
-        let id: UUID
+    private struct DrinkOrderer: Content {
+        let drinkID: UUID
+        let machineID: UUID
     }
 }
 

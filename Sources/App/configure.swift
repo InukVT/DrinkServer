@@ -8,6 +8,8 @@ import Vapor
 public func configure(_ app: Application) throws {
     // uncomment to serve files from /Public folder
     // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
+    
+    // Uncomment for psql
 /*
     let hostname: String
     #if os(Linux)
@@ -23,14 +25,41 @@ public func configure(_ app: Application) throws {
         database: Environment.get("POSTGRES_DB") ?? "vapor_database"
     ), as: .psql)
 */
-    app.databases.use(.sqlite(.memory), as: .sqlite)
+    app
+        .databases
+        .use(.sqlite(.memory),
+             as: .sqlite)
     
-    app.migrations.add(User.Migtation())
-    app.migrations.add(Token.Migration())
+    app
+        .migrations
+        .add(User.Migtation())
+    
+    app
+        .migrations
+        .add(Token.Migration())
+    
+    app
+        .migrations
+        .add(Machine.Migration())
+    
+    app
+        .migrations
+        .add(DrinkRecipe.Migration())
+    
+    
     // register routes
     try app
         .routes
         .register(collection: UserController())
+    
+    try app
+        .routes
+        .register(collection: MachineController())
+    
+    try app
+        .routes
+        .register(collection: DrinksController())
+    
     app
         .http
         .server
@@ -38,6 +67,6 @@ public func configure(_ app: Application) throws {
         .hostname = "0.0.0.0"
     try routes(app)
     
-    app
+    _ = app
     .autoMigrate()
 }

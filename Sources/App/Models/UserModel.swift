@@ -176,12 +176,12 @@ struct AdminAuthenticator: BearerAuthenticator {
                 token
                     .$user
                     .get(on: req.db)
-                    .map { user in
+                    .flatMapThrowing { user in
                         if (user.rights.contains(.modDrinks))
                         {
                             req.auth.login( user )
                         } else {
-                            Abort(.unauthorized)
+                            throw Abort(.unauthorized)
                         }
                 }
         }
