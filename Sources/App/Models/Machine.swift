@@ -30,13 +30,13 @@ final class MachineDrinkPivot: Model {
     @ID(key: "id")
     var id: UUID?
     
-    @Parent(key: "recipe-id")
+    @Parent(key: "machine-id")
     var machine: Machine
     
     @Parent(key: "ingredient-id")
     var ingredient: Ingredient
     
-    init(machineID: UUID, ingredientID: UUID) {
+    init(id: UUID? = nil, machineID: UUID, ingredientID: UUID) {
         self.$machine.id = machineID
         self.$ingredient.id = ingredientID
     }

@@ -15,7 +15,7 @@ final class DrinkRecipe: Model, Content {
     
     init() {}
     
-    init(id: UUID?, name: String) {
+    init(id: UUID? = nil, name: String) {
         self.id = id
         self.name = name
     }

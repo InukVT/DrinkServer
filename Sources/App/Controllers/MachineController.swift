@@ -6,8 +6,31 @@ public struct MachineController: RouteCollection {
     // Register the websocket endpoint as an endpoint
     public func boot(routes: RoutesBuilder) {
         let machine = routes.grouped("machine")
+        machine.get(use: getMachines)
+        machine.put(use: putIngredient)
         machine.webSocket(":name",
                           onUpgrade: register)
+    }
+    
+    func putIngredient(req: Request) throws -> EventLoopFuture<HTTPStatus> {
+        try req.content.decode(MachineDrink.self)
+            .toPivot()
+            .save(on: req.db)
+            .map { .created }
+    }
+    
+    struct MachineDrink: Decodable {
+        let machineID: UUID
+        let ingredientID: UUID
+        
+        func toPivot() -> MachineDrinkPivot {
+            .init(machineID: machineID, ingredientID: ingredientID)
+        }
+    }
+    
+    func getMachines(req: Request) -> EventLoopFuture<[Machine]> {
+        Machine.query(on: req.db)
+            .all()
     }
     
     // Struct to store the essentials for a websocket connection

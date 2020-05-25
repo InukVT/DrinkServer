@@ -46,6 +46,17 @@ public func configure(_ app: Application) throws {
         .migrations
         .add(DrinkRecipe.Migration())
     
+    app
+        .migrations
+        .add(Ingredient.Migration())
+    
+    app
+        .migrations
+        .add(MachineDrinkPivot.Migration())
+    
+    app
+        .migrations
+        .add(RecipePivot.Migration())
     
     // register routes
     try app
@@ -60,11 +71,20 @@ public func configure(_ app: Application) throws {
         .routes
         .register(collection: DrinksController())
     
+    
+    
     app
         .http
         .server
         .configuration
         .hostname = "0.0.0.0"
+    
+    app
+        .http
+        .server
+        .configuration
+        .port = 80
+    
     try routes(app)
     
     _ = app
