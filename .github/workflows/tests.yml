@@ -11,6 +11,5 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install sqlite3
-      run: sudo apt-get install sqlite3
-    - run: apt-get install libsqlite3-dev
+      run: sudo apt-get install libsqlite3-dev
     - run: swift test --enable-test-discovery --sanitize=thread
