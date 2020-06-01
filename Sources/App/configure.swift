@@ -25,11 +25,13 @@ public func configure(_ app: Application) throws {
         database: Environment.get("POSTGRES_DB") ?? "vapor_database"
     ), as: .psql)
 */
+    // Register the database
     app
         .databases
         .use(.sqlite(.memory),
              as: .sqlite)
     
+    // Create the tables.
     app
         .migrations
         .add(User.Migtation())
