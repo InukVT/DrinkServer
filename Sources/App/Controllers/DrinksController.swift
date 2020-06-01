@@ -8,7 +8,7 @@ struct DrinksController: RouteCollection {
         drinksGroup.get(":machineID",use: drinks)
         
         // The following routes requires a logged in user
-        let tokenAuth = drinksGroup.grouped(TokenAuthenticator())
+        let tokenAuth = drinksGroup.grouped(TokenAuthenticator())//grouped(TokenAuthenticator())
         tokenAuth.post("order", use: orderDrink)
         
         // The following routes requires a user with the role "Can create drink"
@@ -50,8 +50,21 @@ struct DrinksController: RouteCollection {
                     // Check for drinks based on available ingredients on the given machine
                     .filter(Ingredient.self,
                             \Ingredient.$id ~~ machine.ingredient.map { $0.id! })
-                    .unique()
+                    
                     .all()
+                    // Returns on
+                    .map { drinkRecipes in
+                        var ids = [UUID]()
+                        return drinkRecipes.filter { drinkRecipe in
+                            print(drinkRecipe.name)
+                            if !ids.contains(drinkRecipe.id!) {
+                                ids.append(drinkRecipe.id!)
+                                return true
+                            } else {
+                                return false
+                            }
+                        }
+                }
         }
                 
     }
@@ -79,7 +92,7 @@ struct DrinksController: RouteCollection {
                 } else {
                     throw Abort(.internalServerError)
                 }
-                return .ok
+                return .created
         }
     }
     
