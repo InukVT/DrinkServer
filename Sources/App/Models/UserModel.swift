@@ -138,9 +138,6 @@ extension User: ModelAuthenticatable {
     }
 }
 
-enum UserError: Error {
-    case billy
-}
 
 /// This is like a bitmask, but much nicer handled
 struct UserRights: Codable, OptionSet  {
