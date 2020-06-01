@@ -1,7 +1,7 @@
 import Fluent
 import Vapor
 
-
+// Checks if user exists and their password is correct
 struct UserAuthenticator: BasicAuthenticator {
     
     func authenticate(basic: BasicAuthorization,
@@ -53,6 +53,7 @@ extension User {
         let mail: String
         let password: String
         
+        /// Turns this struct into a user struct
         func toUser() -> User {
             .init(mail: mail, password: password)
         }
@@ -62,12 +63,14 @@ extension User {
             self.password = password
         }
         
+        /// Hash the password for better security
         func hash() -> UserContent {
             .init(mail: mail, password: try! Bcrypt.hash(password))
         }
     }
 }
 
+// Checks if token is valid
 struct TokenAuthenticator: BearerAuthenticator {
     
     func authenticate(bearer: BearerAuthorization,
@@ -108,6 +111,7 @@ final class Token: Model, Content {
     }
 }
 extension User {
+    /// Generate a random token for a given user
     func generateToken() throws -> Token {
         try .init(
             token: [UInt8].random(count: 16).base64,
@@ -164,6 +168,7 @@ struct UserRights: Codable, OptionSet  {
     static let modDrinks = UserRights(rawValue: 1 << 2)
 }
 
+// Check if user is admin or return unauthorized
 struct AdminAuthenticator: BearerAuthenticator {
     
     func authenticate(bearer: BearerAuthorization,

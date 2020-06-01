@@ -21,6 +21,7 @@ final class DrinkRecipe: Model, Content {
     }
 }
 
+// Drink ingredient relations
 final class RecipePivot: Model {
     static let schema: String = "recipe-pivot"
     
