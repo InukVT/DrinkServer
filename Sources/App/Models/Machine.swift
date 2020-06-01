@@ -22,6 +22,7 @@ final class Machine: Model, Content {
     }
 }
 
+// Machine drink relations
 final class MachineDrinkPivot: Model {
     init() {}
     

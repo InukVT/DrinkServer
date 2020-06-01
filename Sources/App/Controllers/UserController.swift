@@ -12,6 +12,7 @@ struct UserController: RouteCollection {
         tokenProtected.delete("logout", use: logoutUser)
     }
     
+    // Creates user in the database, where their password is hashed
     func registerUser(req: Request) throws -> EventLoopFuture<HTTPResponseStatus> {
         let userContent = try req.content.decode(User.UserContent.self)
             
@@ -22,15 +23,16 @@ struct UserController: RouteCollection {
             .map{ HTTPResponseStatus.ok }
     }
     
+    // Logs in user by sending them a token
     func loginUser(req: Request) throws -> EventLoopFuture<Token> {
         let user = try req.auth.require(User.self)
         let token = try user.generateToken()
-        //req.auth.login(user.self)
         return  token
             .save(on: req.db)
             .map{ token }
     }
     
+    // Deletes token
     func logoutUser(req: Request) throws -> HTTPResponseStatus {
         req.auth.logout(User.self)
         return .ok

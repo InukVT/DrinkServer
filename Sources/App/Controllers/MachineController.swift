@@ -12,6 +12,7 @@ public struct MachineController: RouteCollection {
                           onUpgrade: register)
     }
     
+    // Tells the system, a machine has a given ingredient
     func putIngredient(req: Request) throws -> EventLoopFuture<HTTPStatus> {
         try req.content.decode(MachineDrink.self)
             .toPivot()
@@ -28,6 +29,7 @@ public struct MachineController: RouteCollection {
         }
     }
     
+    // List all machines
     func getMachines(req: Request) -> EventLoopFuture<[Machine]> {
         Machine.query(on: req.db)
             .all()
