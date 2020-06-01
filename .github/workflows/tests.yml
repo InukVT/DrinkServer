@@ -4,12 +4,13 @@ on: [push]
 
 jobs:
   bionic:
+    services:
+      sqlite:
+       image: keinos/sqlite3
     container: 
       image: vapor/swift:5.2-bionic
-
+    
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Install sqlite3
-      run: sudo apt-get install libsqlite3-dev
     - run: swift test --enable-test-discovery --sanitize=thread
